@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>NEXAR ESPORTS</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{
+    --bg:#0a0d14;
+    --bg-soft:#0e1220;
+    --card:#131826;
+    --card-2:#1a2032;
+    --border:rgba(255,255,255,.07);
+    --border-soft:rgba(255,255,255,.04);
+    --accent:#ff3b5c;
+    --accent-2:#ff7a45;
+    --accent-grad:linear-gradient(135deg,#ff3b5c 0%, #ff7a45 100%);
+    --text:#f3f5fa;
+    --text-dim:#8b93aa;
+    --text-faint:#565f78;
+    --gold:#ffcf5c;
+    --blue:#5aa9ff;
+    --green:#35d07f;
+    --r-lg:22px;
+    --r-md:16px;
+    --r-sm:12px;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%; margin:0; overscroll-behavior:none;}
+  body{
+    background:
+      radial-gradient(900px 500px at 90% -10%, rgba(255,59,92,.10), transparent 60%),
+      radial-gradient(700px 500px at -10% 10%, rgba(90,169,255,.06), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter','Segoe UI',Roboto,-apple-system,sans-serif;
+    display:flex; flex-direction:column; min-height:100%;
+    letter-spacing:.15px;
+  }
+  ::-webkit-scrollbar{display:none;}
+  b,strong{font-weight:800;}
+
+  /* ---------- SPLASH ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:999; transition:opacity .5s ease;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    background:radial-gradient(circle at 50% 35%, #171e30 0%, #0a0d14 65%);
+  }
+  #splash .mark{
+    width:84px; height:84px; border-radius:26px; background:var(--accent-grad);
+    display:flex; align-items:center; justify-content:center; font-weight:900; font-size:26px;
+    box-shadow:0 0 50px rgba(255,59,92,.45); animation:breathe 1.6s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{transform:scale(1);} 50%{transform:scale(1.06);}}
+  #splash .wordmark{margin-top:18px; font-size:21px; font-weight:900; letter-spacing:3px;}
+  #splash .wordmark span{color:var(--accent-2);}
+  #splash .sub{margin-top:4px; font-size:11px; letter-spacing:4px; color:var(--text-faint); font-weight:700;}
+  #splash .bar{width:120px; height:3px; border-radius:3px; background:var(--card-2); margin-top:22px; overflow:hidden;}
+  #splash .bar i{display:block; height:100%; width:0%; background:var(--accent-grad); animation:load 1.7s ease forwards;}
+  @keyframes load{to{width:100%;}}
+
+  /* ---------- HEADER ---------- */
+  header.topbar{
+    display:flex; align-items:center; gap:10px; padding:16px 16px 12px;
+    position:sticky; top:0; z-index:20; background:rgba(10,13,20,.85); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .brand-badge{
+    width:38px; height:38px; border-radius:12px; background:var(--accent-grad);
+    display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px;
+    box-shadow:0 6px 18px rgba(255,59,92,.35);
+  }
+  .brand-name{font-weight:900; line-height:1.1; font-size:14.5px;}
+  .brand-name span{display:block; color:var(--text-faint); font-size:9.5px; letter-spacing:3px; font-weight:700; margin-top:1px;}
+  .header-actions{margin-left:auto; display:flex; align-items:center; gap:8px;}
+  .icon-btn{
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    background:var(--card); border:1px solid var(--border); color:var(--text-dim);
+    border-radius:12px; position:relative; font-size:15px;
+  }
+  .icon-btn .dot{position:absolute; top:6px; right:7px; width:6px; height:6px; border-radius:50%; background:var(--accent);}
+  .admin-pill{
+    display:flex; align-items:center; gap:5px; background:var(--accent-grad); color:#fff; font-weight:800;
+    font-size:10.5px; padding:8px 12px; border-radius:20px; letter-spacing:.4px; box-shadow:0 4px 14px rgba(255,59,92,.3);
+  }
+  .avatar{width:36px; height:36px; border-radius:12px; object-fit:cover; border:1.5px solid var(--border); background:var(--card-2);}
+  .avatar-wrap{position:relative;}
+  .online-dot{position:absolute; bottom:-2px; right:-2px; width:11px; height:11px; border-radius:50%; background:var(--green); border:2px solid var(--bg);}
+
+  main{flex:1; overflow-y:auto; padding-bottom:100px;}
+  .screen{display:none; padding:16px;}
+  .screen.active{display:block; animation:fadein .3s ease;}
+  @keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    border-radius:var(--r-lg); padding:24px 22px; position:relative; overflow:hidden; margin-bottom:16px;
+    background:linear-gradient(150deg,#1c1420 0%, #170d13 55%, #0e1220 100%);
+    border:1px solid var(--border); box-shadow:var(--shadow);
+  }
+  .hero::after{content:""; position:absolute; right:-60px; top:-60px; width:220px; height:220px; background:var(--accent); opacity:.18; filter:blur(60px); border-radius:50%;}
+  .hero::before{content:""; position:absolute; left:-40px; bottom:-60px; width:160px; height:160px; background:var(--blue); opacity:.10; filter:blur(50px); border-radius:50%;}
+  .tag-live{
+    position:relative; z-index:1; display:inline-flex; align-items:center; gap:6px; background:var(--accent-grad); color:#fff;
+    font-weight:800; font-size:11px; padding:6px 13px; border-radius:20px; letter-spacing:.5px; margin-bottom:14px;
+  }
+  .tag-live i{width:6px; height:6px; border-radius:50%; background:#fff; animation:blink 1.2s infinite;}
+  @keyframes blink{50%{opacity:.2;}}
+  .hero h1{position:relative; z-index:1; font-size:25px; margin:0; line-height:1.2; font-weight:900;}
+  .hero h1 b{background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; color:transparent; display:block;}
+  .hero p{position:relative; z-index:1; color:var(--text-dim); font-size:13px; margin-top:10px; max-width:88%;}
+
+  .fame{
+    display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border);
+    border-radius:var(--r-md); padding:15px 16px; margin-bottom:14px; cursor:pointer;
+  }
+  .fame .ico{width:40px; height:40px; border-radius:12px; background:rgba(255,207,92,.12); display:flex; align-items:center; justify-content:center; font-size:19px;}
+  .fame .txt b{display:block; font-size:13.5px; font-weight:800;}
+  .fame .txt small{color:var(--text-dim); font-size:11.5px;}
+  .fame .arrow{margin-left:auto; color:var(--gold); font-weight:900;}
+
+  .search{
+    display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border);
+    border-radius:var(--r-md); padding:13px 16px; margin-bottom:14px; color:var(--text-faint);
+  }
+  .search input{background:none; border:none; outline:none; color:var(--text); font-size:14px; width:100%;}
+
+  .chips{display:flex; gap:8px; overflow-x:auto; margin-bottom:12px; padding-bottom:2px;}
+  .chip{
+    flex:0 0 auto; padding:9px 17px; font-weight:700; font-size:12.5px; background:var(--card);
+    border:1px solid var(--border); color:var(--text-dim); border-radius:20px; transition:.15s ease;
+  }
+  .chip.active{background:var(--accent-grad); color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(255,59,92,.3);}
+  .chips.status .chip{background:none; border:1px solid var(--border-soft); padding:7px 14px; font-size:11.5px;}
+  .chips.status .chip.active{border-color:var(--accent); color:var(--accent); background:rgba(255,59,92,.08);}
+
+  /* ---------- TOURNAMENT CARD ---------- */
+  .t-card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--r-md); margin-bottom:12px;
+    overflow:hidden; transition:transform .15s ease; box-shadow:0 4px 16px rgba(0,0,0,.2);
+  }
+  .t-card:active{transform:scale(.985);}
+  .t-card .head{display:flex; justify-content:space-between; align-items:center; padding:14px 16px 10px;}
+  .t-card .head b{font-size:14.5px; font-weight:800;}
+  .status-pill{font-size:10px; font-weight:800; padding:5px 11px; border-radius:20px; letter-spacing:.3px;}
+  .status-FAOL{background:rgba(255,59,92,.14); color:var(--accent);}
+  .status-TOLDI{background:rgba(255,207,92,.14); color:var(--gold);}
+  .status-KUTILMOQDA{background:rgba(90,169,255,.14); color:var(--blue);}
+  .status-YAKUNLANGAN{background:rgba(139,147,167,.14); color:var(--text-dim);}
+  .t-card .body{padding:2px 16px 14px; display:flex; justify-content:space-between; align-items:center;}
+  .t-card .meta{color:var(--text-dim); font-size:11.5px;}
+  .slots-mini{font-size:12px; color:var(--text);}
+  .slots-mini b{color:var(--accent);}
+  .t-card .progress{height:4px; background:var(--card-2); margin:0 16px 16px; border-radius:4px; overflow:hidden;}
+  .t-card .progress i{display:block; height:100%; background:var(--accent-grad); border-radius:4px; transition:width .4s ease;}
+  .countdown{font-size:11.5px; color:var(--gold); margin-top:6px; font-weight:700;}
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    display:block; width:100%; text-align:center; background:var(--accent-grad); color:#fff; font-weight:800;
+    padding:15px; border:none; font-size:14px; letter-spacing:.3px; cursor:pointer; border-radius:var(--r-sm);
+    box-shadow:0 8px 20px rgba(255,59,92,.28);
+  }
+  .btn.ghost{background:transparent; border:1px solid var(--border); color:var(--text); box-shadow:none;}
+  .btn.sm{padding:10px; font-size:12.5px; width:auto; flex:1;}
+  .btn:active{transform:scale(.98);}
+  .row-btns{display:flex; gap:8px; margin-top:10px;}
+
+  /* ---------- SLOT GRID (silliq) ---------- */
+  .slot-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0;}
+  .slot{
+    aspect-ratio:1; background:var(--card-2); border:1px solid var(--border); border-radius:var(--r-sm);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:10.5px;
+    color:var(--text-faint); position:relative; cursor:pointer; transition:transform .12s ease;
+  }
+  .slot:active{transform:scale(.93);}
+  .slot .num{position:absolute; top:6px; left:8px; font-size:9px; color:var(--text-faint); font-weight:700;}
+  .slot.open{border:1.5px dashed var(--border);}
+  .slot.pending{border-color:var(--gold); color:var(--gold); background:rgba(255,207,92,.08);}
+  .slot.locked{background:rgba(255,59,92,.10); border-color:var(--accent); color:#fff;}
+  .slot .av{
+    width:28px; height:28px; border-radius:50%; background:var(--accent-grad); display:flex; align-items:center;
+    justify-content:center; font-weight:800; margin-bottom:5px; font-size:11px; color:#fff;
+  }
+  .slot.open .plus{font-size:18px; color:var(--text-faint); font-weight:300;}
+
+  /* ---------- MODAL ---------- */
+  .modal-bg{position:fixed; inset:0; background:rgba(4,5,9,.65); backdrop-filter:blur(2px); z-index:80; display:none; align-items:flex-end;}
+  .modal-bg.active{display:flex;}
+  .modal{
+    background:var(--bg-soft); border:1px solid var(--border); border-bottom:none; width:100%; max-height:88vh;
+    overflow-y:auto; padding:20px 18px calc(26px + env(safe-area-inset-bottom,0px));
+    border-radius:26px 26px 0 0; animation:slideup .28s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes slideup{from{transform:translateY(40px); opacity:0;} to{transform:none; opacity:1;}}
+  .modal-handle{width:36px; height:4px; background:var(--card-2); border-radius:4px; margin:-6px auto 14px;}
+  .modal h3{margin:0 0 16px; font-size:17px; font-weight:900;}
+  .field{margin-bottom:13px;}
+  .field label{display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:7px; font-weight:700;}
+  .field input, .field select, .field textarea{
+    width:100%; background:var(--card); border:1px solid var(--border); color:var(--text);
+    padding:13px 14px; font-size:14px; outline:none; border-radius:var(--r-sm);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent);}
+  .upload-box{border:1.5px dashed var(--border); border-radius:var(--r-sm); padding:22px; text-align:center; color:var(--text-dim); font-size:12.5px;}
+  .close-x{position:absolute; top:16px; right:16px; color:var(--text-dim); font-size:18px; background:var(--card); border:1px solid var(--border); width:32px; height:32px; border-radius:50%;}
+
+  /* ---------- BRACKET ---------- */
+  .bracket-col{display:flex; flex-direction:column; gap:12px; margin-bottom:10px;}
+  .match-card{background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); padding:12px;}
+  .match-card .r{display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-faint); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; font-weight:700;}
+  .match-card .p{background:var(--card-2); border-radius:10px; padding:10px 12px; font-size:13px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;}
+  .match-card .p.winner{color:var(--accent); font-weight:800; background:rgba(255,59,92,.1);}
+  .match-card .vs{text-align:center; color:var(--text-faint); font-size:10px; font-weight:700;}
+
+  /* ---------- PROFILE ---------- */
+  .tg-connect-banner{
+    display:flex; align-items:center; gap:10px; background:rgba(53,208,127,.08); border:1px solid rgba(53,208,127,.3);
+    border-radius:var(--r-md); padding:12px 14px; margin-bottom:18px; font-size:12px; color:var(--green); font-weight:700;
+  }
+  .profile-head{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
+  .profile-head .avatar-wrap img{width:68px; height:68px; border-radius:20px; border:2px solid var(--card-2); object-fit:cover; background:var(--card-2);}
+  .profile-head .online-dot{width:14px; height:14px;}
+  .profile-head .name{font-size:17px; font-weight:900;}
+  .profile-head .uname{color:var(--text-dim); font-size:13px;}
+  .stat-row{display:flex; gap:8px; margin-bottom:18px;}
+  .stat-box{flex:1; background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); padding:15px; text-align:center;}
+  .stat-box b{display:block; font-size:19px; font-weight:900;}
+  .stat-box.win b{color:var(--accent);}
+  .stat-box small{color:var(--text-dim); font-size:10.5px; font-weight:700;}
+
+  .section-title{font-size:12.5px; font-weight:800; letter-spacing:1px; color:var(--text-dim); margin:22px 0 12px; text-transform:uppercase;}
+  .badge-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  .badge-item{background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); padding:14px 6px; text-align:center; opacity:.32; transition:.2s ease;}
+  .badge-item.earned{opacity:1; border-color:var(--accent); box-shadow:0 6px 18px rgba(255,59,92,.2); background:linear-gradient(160deg, rgba(255,59,92,.08), var(--card));}
+  .badge-item .ic{font-size:23px; margin-bottom:5px;}
+  .badge-item .nm{font-size:9.5px; color:var(--text-dim); font-weight:700; line-height:1.25;}
+  .badge-item.earned .nm{color:var(--text);}
+
+  .setting-row{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); padding:14px 16px; margin-bottom:10px;}
+  .lang-toggle{display:flex; background:var(--card-2); border-radius:20px; padding:3px;}
+  .lang-toggle button{padding:7px 15px; background:none; border:none; color:var(--text-dim); font-weight:800; font-size:11.5px; border-radius:16px;}
+  .lang-toggle button.active{background:var(--accent-grad); color:#fff;}
+
+  .sos-btn{display:flex; align-items:center; justify-content:center; gap:8px; background:var(--card); border:1px solid var(--accent); color:var(--accent); font-weight:800; padding:15px; margin-top:16px; border-radius:var(--r-sm);}
+
+  /* ---------- ADMIN ---------- */
+  .admin-lock-banner{
+    display:flex; align-items:center; gap:10px; background:linear-gradient(135deg, rgba(255,59,92,.14), rgba(255,122,69,.08));
+    border:1px solid var(--accent); border-radius:var(--r-md); padding:14px 16px; margin:22px 0 14px; font-size:12px; font-weight:700;
+  }
+  .admin-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;}
+  .admin-stats .box{background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); padding:12px; text-align:center;}
+  .admin-stats .box b{display:block; font-size:17px; font-weight:900; color:var(--accent-2);}
+  .admin-stats .box small{color:var(--text-dim); font-size:9.5px; font-weight:700;}
+  .admin-card{background:var(--card); border:1px solid var(--border); border-radius:var(--r-md); padding:16px; margin-bottom:12px;}
+  .admin-card h4{margin:0 0 12px; font-size:12.5px; color:var(--accent-2); text-transform:uppercase; letter-spacing:.8px; font-weight:800;}
+  .app-row{display:flex; align-items:center; gap:10px; background:var(--card-2); border-radius:var(--r-sm); padding:11px; margin-bottom:8px; font-size:12.5px;}
+  .app-row .nm{flex:1;}
+  .app-row .actions{display:flex; gap:6px;}
+  .app-row .actions button{border:none; padding:8px 11px; font-weight:800; font-size:11px; border-radius:9px;}
+  .app-row .approve{background:var(--accent-grad); color:#fff;}
+  .app-row .reject{background:var(--card); color:var(--text-dim); border:1px solid var(--border);}
+
+  /* ---------- BOTTOM NAV (floating pill) ---------- */
+  nav.bottom{
+    position:fixed; bottom:14px; left:16px; right:16px; background:rgba(19,24,38,.85); backdrop-filter:blur(16px);
+    border:1px solid var(--border); border-radius:24px; display:flex; z-index:50; box-shadow:0 12px 32px rgba(0,0,0,.4);
+    padding:6px; padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));
+  }
+  nav.bottom button{
+    flex:1; background:none; border:none; color:var(--text-faint); display:flex; flex-direction:column;
+    align-items:center; gap:3px; padding:10px 0; font-size:10.5px; font-weight:800; letter-spacing:.4px;
+    border-radius:18px; transition:.2s ease;
+  }
+  nav.bottom button .ic{font-size:19px;}
+  nav.bottom button.active{color:#fff; background:var(--accent-grad); box-shadow:0 6px 16px rgba(255,59,92,.35);}
+
+  .toast{
+    position:fixed; bottom:110px; left:16px; right:16px; background:var(--card-2); border:1px solid var(--accent);
+    border-radius:var(--r-sm); padding:13px 16px; font-size:13px; z-index:200; transform:translateY(20px); opacity:0;
+    transition:.25s ease; text-align:center; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+  .toast.show{transform:none; opacity:1;}
+  .empty{text-align:center; color:var(--text-dim); font-size:13px; padding:50px 10px;}
+  .empty .ic{font-size:34px; margin-bottom:10px; opacity:.5;}
+
+  /* ---------- NOTIFICATIONS DRAWER ---------- */
+  .notif-item{display:flex; gap:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:8px;}
+  .notif-item .ic{width:34px; height:34px; border-radius:10px; background:rgba(255,59,92,.12); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0;}
+  .notif-item b{font-size:12.5px;}
+  .notif-item p{margin:2px 0 0; font-size:11.5px; color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="mark">NX</div>
+  <div class="wordmark">NEXAR <span>ESPORTS</span></div>
+  <div class="sub">PUBG MOBILE TOURNAMENTS</div>
+  <div class="bar"><i></i></div>
+</div>
+
+<header class="topbar">
+  <div class="brand-badge">NX</div>
+  <div class="brand-name">NEXAR<span>ESPORTS</span></div>
+  <div class="header-actions">
+    <div id="adminPill" class="admin-pill" style="display:none">🛡️ ADMIN</div>
+    <button class="icon-btn" onclick="openNotifications()">🔔<span class="dot"></span></button>
+    <div class="avatar-wrap">
+      <img id="headerAvatar" class="avatar" src="" style="display:none">
+      <span class="online-dot" id="headerOnlineDot" style="display:none"></span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== TURNIR ===================== -->
+  <section id="screen-turnir" class="screen active">
+    <div class="hero">
+      <span class="tag-live"><i></i> LIVE SEASON</span>
+      <h1>PUBG MOBILE<b>TDM TURNIRLARI</b></h1>
+      <p data-i18n="hero_desc">Slotni band qiling, bracketda o'z o'rningizni oling.</p>
+    </div>
+
+    <div class="fame" onclick="showToast(t('fame_soon'))">
+      <div class="ico">👑</div>
+      <div class="txt"><b data-i18n="fame_title">HALL OF FAME</b><small data-i18n="fame_sub">Barcha chempionlar va top o'yinchilar</small></div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="search">
+      <span>🔍</span>
+      <input id="searchInput" data-i18n-placeholder="search_ph" placeholder="Turnir qidirish..." oninput="renderTournaments()">
+    </div>
+
+    <div class="chips" id="categoryChips"></div>
+    <div class="chips status" id="statusChips"></div>
+
+    <div id="adminCreateBtnWrap" style="display:none; margin:12px 0 16px;">
+      <button class="btn" onclick="openCreateTournament()">+ <span data-i18n="new_tournament">Yangi turnir yaratish</span></button>
+    </div>
+
+    <div id="tournamentList"></div>
+  </section>
+
+  <!-- ===================== PROFIL ===================== -->
+  <section id="screen-profil" class="screen">
+
+    <div class="tg-connect-banner">
+      <span>✅</span>
+      <span data-i18n="tg_connected">Telegram akkountingiz orqali avtomatik ulandingiz</span>
+    </div>
+
+    <div class="profile-head">
+      <div class="avatar-wrap">
+        <img id="profAvatar" src="">
+        <span class="online-dot"></span>
+      </div>
+      <div>
+        <div class="name" id="profName">—</div>
+        <div class="uname" id="profUsername">@—</div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box win"><b id="statWins">0</b><small data-i18n="wins">G'ALABALAR</small></div>
+      <div class="stat-box"><b id="statLosses">0</b><small data-i18n="losses">MAG'LUBIYAT</small></div>
+      <div class="stat-box"><b id="statWinrate">0%</b><small data-i18n="winrate">WIN RATE</small></div>
+    </div>
+
+    <div class="section-title" data-i18n="pubg_info">PUBG MA'LUMOTLARI</div>
+    <div class="field">
+      <label data-i18n="pubg_nick">PUBG Nickname</label>
+      <input id="pubgNickInput" placeholder="Nickname">
+    </div>
+    <div class="field">
+      <label data-i18n="pubg_id">PUBG ID (faqat raqam)</label>
+      <input id="pubgIdInput" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="512xxxxxxx" oninput="numericOnly(this)">
+    </div>
+    <button class="btn" onclick="saveProfile()" data-i18n="save">Saqlash</button>
+
+    <div class="section-title" data-i18n="badges_title">NISHONLAR</div>
+    <div class="badge-grid" id="badgeGrid"></div>
+
+    <div class="section-title" data-i18n="settings_title">SOZLAMALAR</div>
+    <div class="setting-row">
+      <span data-i18n="language">Til / Язык</span>
+      <div class="lang-toggle">
+        <button id="langUzBtn" onclick="setLang('uz')">UZ</button>
+        <button id="langRuBtn" onclick="setLang('ru')">RU</button>
+      </div>
+    </div>
+
+    <button class="sos-btn" onclick="openSOS()">🆘 <span data-i18n="sos">SOS / Yordam</span></button>
+
+    <div id="adminPanelSection" style="display:none">
+      <div class="admin-lock-banner">🔒 <span>Bu bo'lim faqat @mirzhayev uchun ko'rinadi</span></div>
+
+      <div class="admin-stats">
+        <div class="box"><b id="admStatUsers">0</b><small>FOYDALANUVCHI</small></div>
+        <div class="box"><b id="admStatTournaments">0</b><small>TURNIR</small></div>
+        <div class="box"><b id="admStatPending">0</b><small>KUTILAYOTGAN ARIZA</small></div>
+      </div>
+
+      <div class="admin-card">
+        <h4>🏅 Nishon berish</h4>
+        <div class="field"><input id="awardTgId" type="number" inputmode="numeric" placeholder="Telegram ID" oninput="numericOnly(this)"></div>
+        <div class="field">
+          <select id="awardBadgeSelect"></select>
+        </div>
+        <button class="btn sm" style="width:100%" onclick="awardBadge()">Berish</button>
+      </div>
+
+      <div class="admin-card">
+        <h4>🚫 Bloklangan foydalanuvchilar</h4>
+        <div class="field"><input id="banIdInput" type="number" inputmode="numeric" placeholder="Telegram ID" oninput="numericOnly(this)"></div>
+        <button class="btn sm ghost" style="width:100%" onclick="banUser()">Bloklash</button>
+      </div>
+
+      <div class="admin-card">
+        <h4>📣 Push xabar yuborish</h4>
+        <div class="field"><textarea id="broadcastText" rows="3" placeholder="Xabar matni..."></textarea></div>
+        <button class="btn sm" style="width:100%" onclick="sendBroadcast()">Yuborish</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom">
+  <button id="navTurnir" class="active" onclick="switchScreen('turnir')"><span class="ic">🏆</span><span data-i18n="nav_turnir">TURNIR</span></button>
+  <button id="navProfil" onclick="switchScreen('profil')"><span class="ic">👤</span><span data-i18n="nav_profil">PROFIL</span></button>
+</nav>
+
+<!-- ===================== MODALS ===================== -->
+
+<div class="modal-bg" id="modalTournamentDetail">
+  <div class="modal"><div class="modal-handle"></div>
+    <button class="close-x" onclick="closeModal('modalTournamentDetail')">✕</button>
+    <div id="tDetailContent"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalApply">
+  <div class="modal"><div class="modal-handle"></div>
+    <button class="close-x" onclick="closeModal('modalApply')">✕</button>
+    <h3 data-i18n="apply_title">Slotga yozilish</h3>
+    <div class="field"><label data-i18n="pubg_nick">PUBG Nickname</label><input id="applyNick" placeholder="Nickname"></div>
+    <div class="field"><label data-i18n="pubg_id">PUBG ID</label><input id="applyPubgId" type="number" inputmode="numeric" placeholder="512xxxxxxx" oninput="numericOnly(this)"></div>
+    <div class="field">
+      <label data-i18n="screenshot">Skrinshot (to'lov/natija)</label>
+      <div class="upload-box" onclick="document.getElementById('applyFile').click()">
+        <input type="file" id="applyFile" accept="image/*" style="display:none" onchange="onFileChosen(this)">
+        <span id="fileChosenLabel">📎 <span data-i18n="upload_hint">Fayl tanlash uchun bosing</span></span>
+      </div>
+    </div>
+    <button class="btn" onclick="submitApplication()" data-i18n="submit_application">Arizani yuborish</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalCreateTournament">
+  <div class="modal"><div class="modal-handle"></div>
+    <button class="close-x" onclick="closeModal('modalCreateTournament')">✕</button>
+    <h3>Yangi turnir</h3>
+    <div class="field"><label>Sarlavha</label><input id="ctTitle" placeholder="NEXAR CUP #12"></div>
+    <div class="field"><label>Format</label>
+      <select id="ctFormat"><option value="TDM">TDM</option><option value="BR">Battle Royale</option></select>
+    </div>
+    <div class="field"><label>Kategoriya</label>
+      <select id="ctCategory"><option>HAMMASI</option><option>ELITE</option><option>PRO</option><option>GIRLS</option></select>
+    </div>
+    <div class="field"><label>Slotlar soni</label><input id="ctSlots" type="number" inputmode="numeric" value="16" oninput="numericOnly(this)"></div>
+    <div class="field"><label>Kirish to'lovi (so'm, ixtiyoriy)</label><input id="ctFee" type="number" inputmode="numeric" value="0" oninput="numericOnly(this)"></div>
+    <div class="field"><label>Sovrin fondi</label><input id="ctPrize" placeholder="1 000 000 so'm"></div>
+    <div class="field"><label>To'lov ma'lumoti / Karta</label><input id="ctPayment" placeholder="8600 xxxx xxxx xxxx"></div>
+    <button class="btn" onclick="createTournament()">Yaratish</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalNotifications">
+  <div class="modal"><div class="modal-handle"></div>
+    <button class="close-x" onclick="closeModal('modalNotifications')">✕</button>
+    <h3>🔔 Bildirishnomalar</h3>
+    <div id="notifList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   NEXAR ESPORTS — Telegram Mini App frontend (v2, professional dizayn)
+   Backend ulash: API_BASE ni backend manzilingizga o'zgartiring.
+   Bo'sh bo'lsa localStorage-demo rejimda ishlaydi.
+========================================================= */
+const API_BASE = ""; // <-- MISOL: "https://sizning-backend-domeningiz.com"
+const ADMIN_TELEGRAM_ID = "7951717415";
+
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); }
+
+const tgUser = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {
+  id: 999000111, first_name: "Mehmon", last_name: "", username: "guest_demo", photo_url: ""
+};
+const isAdmin = String(tgUser.id) === ADMIN_TELEGRAM_ID;
+
+const I18N = {
+  uz: {
+    hero_desc:"Slotni band qiling, bracketda o'z o'rningizni oling.", fame_title:"HALL OF FAME",
+    fame_sub:"Barcha chempionlar va top o'yinchilar", fame_soon:"Tez orada!",
+    search_ph:"Turnir qidirish...", new_tournament:"Yangi turnir yaratish",
+    nav_turnir:"TURNIR", nav_profil:"PROFIL", wins:"G'ALABALAR", losses:"MAG'LUBIYAT", winrate:"WIN RATE",
+    pubg_info:"PUBG MA'LUMOTLARI", pubg_nick:"PUBG Nickname", pubg_id:"PUBG ID (faqat raqam)",
+    save:"Saqlash", badges_title:"NISHONLAR", settings_title:"SOZLAMALAR", language:"Til / Язык",
+    sos:"SOS / Yordam", apply_title:"Slotga yozilish", screenshot:"Skrinshot (to'lov/natija)",
+    upload_hint:"Fayl tanlash uchun bosing", submit_application:"Arizani yuborish",
+    slots_left:"bo'sh slot", room_info:"O'YIN XONASI", room_id:"Xona ID", room_pass:"Parol",
+    pending_room:"Tasdiqlangach ochiladi", status_all:"BARCHA HOLAT", empty_list:"Hozircha turnirlar yo'q",
+    applications:"Arizalar", tg_connected:"Telegram akkountingiz orqali avtomatik ulandingiz",
+  },
+  ru: {
+    hero_desc:"Забронируйте слот и займите своё место в сетке.", fame_title:"ЗАЛ СЛАВЫ",
+    fame_sub:"Все чемпионы и топ игроки", fame_soon:"Скоро!",
+    search_ph:"Поиск турнира...", new_tournament:"Создать турнир",
+    nav_turnir:"ТУРНИР", nav_profil:"ПРОФИЛЬ", wins:"ПОБЕДЫ", losses:"ПОРАЖЕНИЯ", winrate:"ВИНРЕЙТ",
+    pubg_info:"ДАННЫЕ PUBG", pubg_nick:"PUBG Никнейм", pubg_id:"PUBG ID (только цифры)",
+    save:"Сохранить", badges_title:"НАГРАДЫ", settings_title:"НАСТРОЙКИ", language:"Til / Язык",
+    sos:"SOS / Помощь", apply_title:"Запись на слот", screenshot:"Скриншот (оплата/результат)",
+    upload_hint:"Нажмите, чтобы выбрать файл", submit_application:"Отправить заявку",
+    slots_left:"свободных слотов", room_info:"КОМНАТА", room_id:"ID комнаты", room_pass:"Пароль",
+    pending_room:"Откроется после подтверждения", status_all:"ВСЕ СТАТУСЫ", empty_list:"Пока нет турниров",
+    applications:"Заявки", tg_connected:"Вы автоматически подключены через Telegram",
+  }
+};
+let currentLang = localStorage.getItem('nexar_lang') || 'uz';
+function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || key; }
+
+/* ---------- 8 TA NISHON ---------- */
+const ALL_BADGES = [
+  {code:'champion', icon:'🏆', name:{uz:'Chempion', ru:'Чемпион'}},
+  {code:'mvp', icon:'⭐', name:{uz:'Turnir MVP', ru:'MVP турнира'}},
+  {code:'sniper', icon:'🎯', name:{uz:'Snayper', ru:'Снайпер'}},
+  {code:'top_fragger', icon:'🔥', name:{uz:'Frag ustasi', ru:'Топ фраггер'}},
+  {code:'veteran', icon:'🎖️', name:{uz:'Faxriy jangchi', ru:'Ветеран'}},
+  {code:'legend', icon:'👑', name:{uz:'Afsona', ru:'Легенда'}},
+  {code:'flawless', icon:'💯', name:{uz:'Nol xato', ru:'Без ошибок'}},
+  {code:'rising_star', icon:'✨', name:{uz:'Yangi yulduz', ru:'Новая звезда'}},
+];
+
+/* ---------- LOCAL DEMO "DATABASE" ---------- */
+function loadLocal(key, fallback){
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch(e){ return fallback; }
+}
+function saveLocal(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+function seedIfEmpty(){
+  if (loadLocal('nexar_tournaments', null)) return;
+  const demo = [
+    { id:1, title:"NEXAR CUP #12", category:"ELITE", format:"TDM", status:"FAOL", slot_count:8, entry_fee:20000,
+      prize_pool:"1 500 000 so'm", starts_at:"2026-10-02T20:00:00", room_id:null, room_password:null,
+      slots:Array.from({length:8},(_,i)=>({slot_number:i+1, status: i<3 ? 'LOCKED':'OPEN', nickname:i<3?['Cleverboi','SS1•SHOXA','mr.akrom'][i]:null, telegram_id:i<3?String(100+i):null})) },
+    { id:2, title:"WEEKEND PRO SERIES", category:"PRO", format:"TDM", status:"KUTILMOQDA", slot_count:16, entry_fee:0,
+      prize_pool:"Kubok + sertifikat", starts_at:"2026-10-05T18:00:00", room_id:null, room_password:null,
+      slots:Array.from({length:16},(_,i)=>({slot_number:i+1, status:'OPEN', nickname:null, telegram_id:null})) },
+    { id:3, title:"GIRLS ONLY SQUAD", category:"GIRLS", format:"TDM", status:"TOLDI", slot_count:8, entry_fee:0,
+      prize_pool:"500 000 so'm", starts_at:"2026-09-30T19:00:00", room_id:"7841022", room_password:"nx2026",
+      slots:Array.from({length:8},(_,i)=>({slot_number:i+1, status:'LOCKED', nickname:'Player'+(i+1), telegram_id:String(200+i)})) },
+  ];
+  saveLocal('nexar_tournaments', demo);
+  saveLocal('nexar_applications', []);
+  saveLocal('nexar_users', {});
+  saveLocal('nexar_badges_earned', {});
+}
+seedIfEmpty();
+
+/* ---------- API HELPER ---------- */
+async function api(path, options={}){
+  if (!API_BASE) return null;
+  try{
+    const res = await fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: { 'Content-Type':'application/json', 'X-Telegram-Init-Data': tg ? tg.initData : '' },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+    if (!res.ok) throw new Error('API xatosi: ' + res.status);
+    return await res.json();
+  }catch(e){
+    console.warn('Backend ulanmadi, demo rejimga o\u2019tildi:', e.message);
+    return null;
+  }
+}
+
+let selectedCategory = 'HAMMASI';
+let selectedStatus = null;
+let activeTournamentId = null;
+let activeSlotNumber = null;
+let uploadedScreenshotUrl = null;
+
+/* ---------- SPLASH ---------- */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const s = document.getElementById('splash');
+    s.style.opacity = '0';
+    setTimeout(() => s.remove(), 500);
+  }, 1800);
+  init();
+});
+
+function init(){
+  const av = tgUser.photo_url || '';
+  document.getElementById('headerAvatar').src = av;
+  document.getElementById('headerAvatar').style.display = av ? 'block' : 'none';
+  document.getElementById('headerOnlineDot').style.display = 'block';
+  document.getElementById('profAvatar').src = av || ('https://api.dicebear.com/7.x/shapes/svg?seed=' + tgUser.id);
+  document.getElementById('profName').textContent = ((tgUser.first_name||'') + ' ' + (tgUser.last_name||'')).trim() || 'Foydalanuvchi';
+  document.getElementById('profUsername').textContent = tgUser.username ? '@'+tgUser.username : ('ID: '+tgUser.id);
+
+  if (isAdmin){
+    document.getElementById('adminPill').style.display = 'flex';
+    document.getElementById('adminCreateBtnWrap').style.display = 'block';
+    document.getElementById('adminPanelSection').style.display = 'block';
+    document.getElementById('awardBadgeSelect').innerHTML = ALL_BADGES.map(b=>`<option value="${b.code}">${b.icon} ${b.name.uz}</option>`).join('');
+    renderAdminStats();
+  }
+
+  buildChips();
+  renderTournaments();
+  renderProfileStats();
+  renderBadges();
+  applyI18n();
+  setLang(currentLang);
+}
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.getAttribute('data-i18n')));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.placeholder = t(el.getAttribute('data-i18n-placeholder')));
+}
+function setLang(lang){
+  currentLang = lang;
+  localStorage.setItem('nexar_lang', lang);
+  document.getElementById('langUzBtn').classList.toggle('active', lang==='uz');
+  document.getElementById('langRuBtn').classList.toggle('active', lang==='ru');
+  applyI18n(); buildChips(); renderTournaments(); renderBadges();
+}
+
+function switchScreen(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('navTurnir').classList.toggle('active', name==='turnir');
+  document.getElementById('navProfil').classList.toggle('active', name==='profil');
+  if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+}
+
+function buildChips(){
+  const cats = ['HAMMASI','ELITE','PRO','GIRLS'];
+  document.getElementById('categoryChips').innerHTML = cats.map(c => `<div class="chip ${c===selectedCategory?'active':''}" onclick="selectCategory('${c}')">${c}</div>`).join('');
+  const statuses = [
+    {key:null, label:t('status_all')}, {key:'FAOL', label:'FAOL'}, {key:'TOLDI', label:"TO'LDI"},
+    {key:'KUTILMOQDA', label:'KUTILMOQDA'}, {key:'YAKUNLANGAN', label:'YAKUNLANGAN'},
+  ];
+  document.getElementById('statusChips').innerHTML = statuses.map(s =>
+    `<div class="chip ${s.key===selectedStatus?'active':''}" onclick="selectStatus(${s.key?`'${s.key}'`:'null'})">${s.label}</div>`
+  ).join('');
+}
+function selectCategory(c){ selectedCategory = c; buildChips(); renderTournaments(); }
+function selectStatus(s){ selectedStatus = s; buildChips(); renderTournaments(); }
+
+async function renderTournaments(){
+  const search = (document.getElementById('searchInput').value || '').toLowerCase();
+  let list = await api(`/api/tournaments?search=${encodeURIComponent(search)}&category=${selectedCategory}${selectedStatus?('&status='+selectedStatus):''}`);
+  if (!list){
+    list = loadLocal('nexar_tournaments', []).filter(x => {
+      const matchCat = selectedCategory==='HAMMASI' || x.category===selectedCategory;
+      const matchStatus = !selectedStatus || x.status===selectedStatus;
+      const matchSearch = x.title.toLowerCase().includes(search);
+      return matchCat && matchStatus && matchSearch;
+    });
+  }
+  const wrap = document.getElementById('tournamentList');
+  if (!list.length){ wrap.innerHTML = `<div class="empty"><div class="ic">🎮</div>${t('empty_list')}</div>`; return; }
+
+  wrap.innerHTML = list.map(tobj => {
+    const locked = tobj.slots.filter(s=>s.status==='LOCKED').length;
+    const pct = Math.round((locked / tobj.slot_count) * 100);
+    return `
+    <div class="t-card" onclick="openTournament(${tobj.id})">
+      <div class="head"><b>${tobj.title}</b><span class="status-pill status-${tobj.status}">${tobj.status.replace('TOLDI',"TO'LDI")}</span></div>
+      <div class="body">
+        <div class="meta">${tobj.format} · ${tobj.category}${tobj.entry_fee?(' · '+Number(tobj.entry_fee).toLocaleString()+" so'm"):''}</div>
+        <div class="slots-mini"><b>${locked}/${tobj.slot_count}</b> ${t('slots_left')}</div>
+      </div>
+      <div class="progress"><i style="width:${pct}%"></i></div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('searchInput')?.addEventListener('input', renderTournaments);
+
+async function openTournament(id){
+  activeTournamentId = id;
+  let tobj = await api(`/api/tournaments/${id}`);
+  if (!tobj){ tobj = loadLocal('nexar_tournaments', []).find(x=>x.id===id); }
+  if (!tobj) return;
+
+  const canSeeRoom = isAdmin || tobj.slots.some(s => s.status==='LOCKED' && String(s.telegram_id)===String(tgUser.id));
+  const grid = tobj.slots.map(s => {
+    const cls = s.status.toLowerCase();
+    const initial = s.nickname ? s.nickname[0].toUpperCase() : '';
+    return `<div class="slot ${cls}" onclick="onSlotClick(${tobj.id}, ${s.slot_number}, '${s.status}')">
+      <span class="num">${s.slot_number}</span>
+      ${s.nickname ? `<div class="av">${initial}</div><span style="font-size:9px">${s.nickname.slice(0,8)}</span>` : (s.status==='OPEN' ? '<span class="plus">+</span>' : '···')}
+    </div>`;
+  }).join('');
+
+  let roomHtml = `<div class="admin-card">
+      <h4>🔒 ${t('room_info')}</h4>
+      ${canSeeRoom && tobj.room_id ? `
+        <div class="setting-row"><span>${t('room_id')}</span><b>${tobj.room_id}</b></div>
+        <div class="setting-row"><span>${t('room_pass')}</span><b>${tobj.room_password||'—'}</b></div>
+      ` : `<div style="color:var(--text-dim); font-size:12.5px">${t('pending_room')}</div>`}
+      ${isAdmin ? `
+        <div class="field" style="margin-top:10px"><input id="roomIdInput" placeholder="${t('room_id')}" value="${tobj.room_id||''}"></div>
+        <div class="field"><input id="roomPassInput" placeholder="${t('room_pass')}" value="${tobj.room_password||''}"></div>
+        <button class="btn sm" style="width:100%" onclick="saveRoomInfo(${tobj.id})">Saqlash</button>
+      ` : ''}
+    </div>`;
+
+  let bracketHtml = '';
+  if (tobj.matches && tobj.matches.length){
+    const semis = tobj.matches.filter(m=>m.round==='SEMI');
+    const final = tobj.matches.find(m=>m.round==='FINAL');
+    bracketHtml = `<div class="section-title">BRACKET</div><div class="bracket-col">` +
+      semis.map(m => matchCardHtml(m,'SEMI FINAL')).join('') + (final ? matchCardHtml(final,'FINAL') : '') + `</div>`;
+  }
+
+  let adminApplicationsHtml = '';
+  if (isAdmin){
+    let apps = await api(`/api/tournaments/${tobj.id}/applications`);
+    if (!apps) apps = loadLocal('nexar_applications', []).filter(a=>a.tournament_id===tobj.id && a.status==='PENDING');
+    if (apps.length){
+      adminApplicationsHtml = `<div class="admin-card"><h4>${t('applications')} (${apps.length})</h4>` +
+        apps.map(a => `<div class="app-row">
+          <div class="nm"><b>${a.pubg_nickname}</b><br><span style="color:var(--text-dim)">Slot #${a.slot_number} · ID ${a.pubg_id}</span></div>
+          <div class="actions">
+            <button class="approve" onclick="approveApp(${a.id||0}, ${tobj.id}, ${a.slot_number}, '${a.pubg_nickname}', '${a.telegram_id}')">✓</button>
+            <button class="reject" onclick="rejectApp(${a.id||0}, ${tobj.id}, ${a.slot_number})">✕</button>
+          </div>
+        </div>`).join('') + `</div>`;
+    }
+    adminApplicationsHtml += `<div class="admin-card"><h4>Statusni o'zgartirish</h4>
+      <select id="statusSelect" style="width:100%;background:var(--card-2);color:#fff;border:1px solid var(--border);padding:12px;border-radius:12px;margin-bottom:8px;">
+        ${['FAOL','TOLDI',"KUTILMOQDA",'YAKUNLANGAN'].map(s=>`<option ${tobj.status===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <button class="btn sm" style="width:100%" onclick="changeStatus(${tobj.id})">Yangilash</button>
+      <button class="btn sm ghost" style="width:100%; margin-top:8px; border-color:var(--accent); color:var(--accent)" onclick="deleteTournament(${tobj.id})">Turnirni o'chirish</button>
+    </div>`;
+  }
+
+  document.getElementById('tDetailContent').innerHTML = `
+    <h3>${tobj.title}</h3>
+    <div class="meta" style="margin-bottom:10px">${tobj.format} · ${tobj.category} · <span class="status-pill status-${tobj.status}">${tobj.status}</span></div>
+    ${tobj.prize_pool ? `<div class="meta">🏆 Sovrin: <b style="color:var(--gold)">${tobj.prize_pool}</b></div>` : ''}
+    ${tobj.starts_at ? `<div class="countdown" id="cd-${tobj.id}">⏳ —</div>` : ''}
+    <div class="slot-grid">${grid}</div>
+    ${roomHtml}
+    ${bracketHtml}
+    ${adminApplicationsHtml}
+  `;
+  openModal('modalTournamentDetail');
+  if (tobj.starts_at) startCountdown(tobj.id, tobj.starts_at);
+}
+
+function startCountdown(id, startsAt){
+  const el = document.getElementById('cd-'+id);
+  if (!el) return;
+  clearInterval(window.__cdTimer);
+  function tick(){
+    const diff = new Date(startsAt) - new Date();
+    if (diff <= 0){ el.textContent = "⏳ Boshlandi"; clearInterval(window.__cdTimer); return; }
+    const d = Math.floor(diff/86400000), h = Math.floor(diff/3600000)%24, m = Math.floor(diff/60000)%60, s = Math.floor(diff/1000)%60;
+    el.textContent = `⏳ ${d>0?d+'k ':''}${h}s ${m}d ${s}soniya qoldi`;
+  }
+  tick();
+  window.__cdTimer = setInterval(tick, 1000);
+}
+
+function matchCardHtml(m, label){
+  const p1 = m.player1_tg_id || '—'; const p2 = m.player2_tg_id || '—';
+  return `<div class="match-card">
+    <div class="r"><span>${label}</span><span>${m.status}</span></div>
+    <div class="p ${m.winner_tg_id===m.player1_tg_id && m.winner_tg_id ? 'winner':''}">${p1}
+      ${isAdmin && m.status!=='DONE' && m.player1_tg_id ? `<button class="btn sm" style="width:auto;padding:5px 9px" onclick="setWinner(${m.id},'${m.player1_tg_id}')">G'olib</button>`:''}
+    </div>
+    <div class="vs">VS</div>
+    <div class="p ${m.winner_tg_id===m.player2_tg_id && m.winner_tg_id ? 'winner':''}">${p2}
+      ${isAdmin && m.status!=='DONE' && m.player2_tg_id ? `<button class="btn sm" style="width:auto;padding:5px 9px" onclick="setWinner(${m.id},'${m.player2_tg_id}')">G'olib</button>`:''}
+    </div>
+  </div>`;
+}
+
+function onSlotClick(tournamentId, slotNumber, status){
+  if (status !== 'OPEN'){ showToast('Bu slot band'); return; }
+  activeTournamentId = tournamentId; activeSlotNumber = slotNumber; uploadedScreenshotUrl = null;
+  document.getElementById('applyNick').value = '';
+  document.getElementById('applyPubgId').value = '';
+  document.getElementById('fileChosenLabel').innerHTML = `📎 <span>${t('upload_hint')}</span>`;
+  closeModal('modalTournamentDetail');
+  openModal('modalApply');
+}
+function onFileChosen(input){
+  if (input.files && input.files[0]){
+    uploadedScreenshotUrl = 'local://' + input.files[0].name;
+    document.getElementById('fileChosenLabel').textContent = '✅ ' + input.files[0].name;
+  }
+}
+async function submitApplication(){
+  const nick = document.getElementById('applyNick').value.trim();
+  const pubgId = document.getElementById('applyPubgId').value.trim();
+  if (!nick){ showToast('Nickname kiriting'); return; }
+  if (!/^[0-9]+$/.test(pubgId)){ showToast('PUBG ID faqat raqamlardan iborat bo\u2019lishi kerak'); return; }
+
+  const payload = { slot_number: activeSlotNumber, pubg_nickname: nick, pubg_id: pubgId, screenshot_url: uploadedScreenshotUrl };
+  const result = await api(`/api/tournaments/${activeTournamentId}/apply`, { method:'POST', body: payload });
+  if (!result){
+    const list = loadLocal('nexar_tournaments', []);
+    const tobj = list.find(x=>x.id===activeTournamentId);
+    const slot = tobj.slots.find(s=>s.slot_number===activeSlotNumber);
+    slot.status = 'PENDING'; slot.telegram_id = String(tgUser.id);
+    saveLocal('nexar_tournaments', list);
+    const apps = loadLocal('nexar_applications', []);
+    apps.push({ id: Date.now(), tournament_id: activeTournamentId, slot_number: activeSlotNumber,
+                telegram_id: String(tgUser.id), pubg_nickname: nick, pubg_id: pubgId, status:'PENDING' });
+    saveLocal('nexar_applications', apps);
+  }
+  closeModal('modalApply');
+  showToast('Ariza yuborildi! Admin tasdig\u2019ini kuting.');
+  renderTournaments();
+}
+
+/* ---------- ADMIN ACTIONS ---------- */
+function openCreateTournament(){ openModal('modalCreateTournament'); }
+async function createTournament(){
+  const payload = {
+    title: document.getElementById('ctTitle').value.trim(),
+    format: document.getElementById('ctFormat').value,
+    category: document.getElementById('ctCategory').value,
+    slot_count: Number(document.getElementById('ctSlots').value || 16),
+    entry_fee: Number(document.getElementById('ctFee').value || 0),
+    prize_pool: document.getElementById('ctPrize').value.trim(),
+    payment_info: document.getElementById('ctPayment').value.trim(),
+  };
+  if (!payload.title){ showToast('Sarlavha kiriting'); return; }
+  const result = await api('/api/tournaments', { method:'POST', body: payload });
+  if (!result){
+    const list = loadLocal('nexar_tournaments', []);
+    const id = (list.reduce((m,x)=>Math.max(m,x.id),0) || 0) + 1;
+    list.push({ id, ...payload, status:'KUTILMOQDA', room_id:null, room_password:null,
+      slots: Array.from({length:payload.slot_count},(_,i)=>({slot_number:i+1, status:'OPEN', nickname:null, telegram_id:null})) });
+    saveLocal('nexar_tournaments', list);
+  }
+  closeModal('modalCreateTournament');
+  showToast('Turnir yaratildi ✅');
+  renderTournaments(); renderAdminStats();
+}
+async function approveApp(appId, tournamentId, slotNumber, nickname, telegramId){
+  const result = await api(`/api/tournaments/applications/${appId}/approve`, { method:'POST' });
+  if (!result){
+    const list = loadLocal('nexar_tournaments', []);
+    const tobj = list.find(x=>x.id===tournamentId);
+    const slot = tobj.slots.find(s=>s.slot_number===slotNumber);
+    slot.status='LOCKED'; slot.nickname=nickname;
+    saveLocal('nexar_tournaments', list);
+    const apps = loadLocal('nexar_applications', []).filter(a=>!(a.tournament_id===tournamentId && a.slot_number===slotNumber));
+    saveLocal('nexar_applications', apps);
+  }
+  showToast('Tasdiqlandi ✅'); openTournament(tournamentId); renderAdminStats();
+}
+async function rejectApp(appId, tournamentId, slotNumber){
+  const result = await api(`/api/tournaments/applications/${appId}/reject`, { method:'POST' });
+  if (!result){
+    const list = loadLocal('nexar_tournaments', []);
+    const tobj = list.find(x=>x.id===tournamentId);
+    const slot = tobj.slots.find(s=>s.slot_number===slotNumber);
+    slot.status='OPEN'; slot.nickname=null; slot.telegram_id=null;
+    saveLocal('nexar_tournaments', list);
+    const apps = loadLocal('nexar_applications', []).filter(a=>!(a.tournament_id===tournamentId && a.slot_number===slotNumber));
+    saveLocal('nexar_applications', apps);
+  }
+  showToast('Rad etildi'); openTournament(tournamentId); renderAdminStats();
+}
+async function changeStatus(tournamentId){
+  const status = document.getElementById('statusSelect').value;
+  const result = await api(`/api/tournaments/${tournamentId}`, { method:'PATCH', body:{status} });
+  if (!result){
+    const list = loadLocal('nexar_tournaments', []);
+    list.find(x=>x.id===tournamentId).status = status;
+    saveLocal('nexar_tournaments', list);
+  }
+  showToast('Status yangilandi'); openTournament(tournamentId); renderTournaments();
+}
+async function saveRoomInfo(tournamentId){
+  const room_id = document.getElementById('roomIdInput').value.trim();
+  const room_password = document.getElementById('roomPassInput').value.trim();
+  const result = await api(`/api/tournaments/${tournamentId}`, { method:'PATCH', body:{room_id, room_password} });
+  if (!result){
+    const list = loadLocal('nexar_tournaments', []);
+    Object.assign(list.find(x=>x.id===tournamentId), {room_id, room_password});
+    saveLocal('nexar_tournaments', list);
+  }
+  showToast('Xona ma\u2019lumoti saqlandi 🔒'); openTournament(tournamentId);
+}
+async function deleteTournament(tournamentId){
+  const result = await api(`/api/tournaments/${tournamentId}`, { method:'DELETE' });
+  if (!result){
+    let list = loadLocal('nexar_tournaments', []).filter(x=>x.id!==tournamentId);
+    saveLocal('nexar_tournaments', list);
+  }
+  closeModal('modalTournamentDetail'); showToast('Turnir o\u2019chirildi'); renderTournaments(); renderAdminStats();
+}
+async function setWinner(matchId, winnerTgId){
+  await api(`/api/tournaments/matches/${matchId}/winner`, { method:'POST', body:{winner_tg_id:winnerTgId} });
+  showToast('G\u2019olib belgilandi 🏆'); openTournament(activeTournamentId);
+}
+function banUser(){
+  const id = document.getElementById('banIdInput').value.trim();
+  if (!/^[0-9]+$/.test(id)){ showToast('Faqat raqam kiriting'); return; }
+  api('/api/admin/blacklist', { method:'POST', body:{telegram_id:id} });
+  showToast('Foydalanuvchi bloklandi 🚫');
+}
+function sendBroadcast(){
+  const text = document.getElementById('broadcastText').value.trim();
+  if (!text) return;
+  api('/api/admin/broadcast', { method:'POST', body:{text} });
+  showToast('Xabar yuborishga navbatga qo\u2019yildi 📣');
+}
+function awardBadge(){
+  const id = document.getElementById('awardTgId').value.trim();
+  const code = document.getElementById('awardBadgeSelect').value;
+  if (!/^[0-9]+$/.test(id)){ showToast('Telegram ID faqat raqam bo\u2019lishi kerak'); return; }
+  api('/api/admin/badges/award', { method:'POST', body:{telegram_id:id, badge_code:code} });
+  const earned = loadLocal('nexar_badges_earned', {});
+  earned[id] = [...new Set([...(earned[id]||[]), code])];
+  saveLocal('nexar_badges_earned', earned);
+  showToast('Nishon berildi 🏅'); if (String(id)===String(tgUser.id)) renderBadges();
+}
+function renderAdminStats(){
+  const users = loadLocal('nexar_users', {});
+  const tournaments = loadLocal('nexar_tournaments', []);
+  const apps = loadLocal('nexar_applications', []).filter(a=>a.status==='PENDING');
+  document.getElementById('admStatUsers').textContent = Object.keys(users).length || 1;
+  document.getElementById('admStatTournaments').textContent = tournaments.length;
+  document.getElementById('admStatPending').textContent = apps.length;
+}
+
+/* ---------- PROFILE ---------- */
+function renderProfileStats(){
+  const users = loadLocal('nexar_users', {});
+  const me = users[tgUser.id] || { wins:0, losses:0, pubg_nickname:'', pubg_id:'' };
+  document.getElementById('statWins').textContent = me.wins || 0;
+  document.getElementById('statLosses').textContent = me.losses || 0;
+  const total = (me.wins||0) + (me.losses||0);
+  document.getElementById('statWinrate').textContent = (total ? Math.round((me.wins/total)*100) : 0) + '%';
+  document.getElementById('pubgNickInput').value = me.pubg_nickname || '';
+  document.getElementById('pubgIdInput').value = me.pubg_id || '';
+}
+async function saveProfile(){
+  const pubg_nickname = document.getElementById('pubgNickInput').value.trim();
+  const pubg_id = document.getElementById('pubgIdInput').value.trim();
+  if (pubg_id && !/^[0-9]+$/.test(pubg_id)){ showToast('PUBG ID faqat raqam bo\u2019lishi kerak'); return; }
+  const result = await api('/api/users/me/profile', { method:'PATCH', body:{pubg_nickname, pubg_id} });
+  if (!result){
+    const users = loadLocal('nexar_users', {});
+    users[tgUser.id] = { ...(users[tgUser.id]||{wins:0,losses:0}), pubg_nickname, pubg_id };
+    saveLocal('nexar_users', users);
+  }
+  showToast('Profil saqlandi ✅');
+}
+function renderBadges(){
+  const earned = (loadLocal('nexar_badges_earned', {})[tgUser.id]) || (isAdmin ? ['champion','mvp'] : []);
+  document.getElementById('badgeGrid').innerHTML = ALL_BADGES.map(b => `
+    <div class="badge-item ${earned.includes(b.code)?'earned':''}">
+      <div class="ic">${b.icon}</div>
+      <div class="nm">${b.name[currentLang]}</div>
+    </div>`).join('');
+}
+function openSOS(){
+  if (tg && tg.openTelegramLink) tg.openTelegramLink('https://t.me/mirzhayev');
+  else window.open('https://t.me/mirzhayev','_blank');
+}
+
+/* ---------- NOTIFICATIONS ---------- */
+function openNotifications(){
+  const items = [
+    {ic:'🏆', title:'NEXAR CUP #12 boshlanmoqda', desc:'2-oktabr, 20:00 — slotni band qiling'},
+    {ic:'✅', title:'Arizangiz tasdiqlandi', desc:'Sizning slotingiz muvaffaqiyatli qulflandi'},
+    {ic:'🏅', title:'Yangi nishon', desc:'Sizga "Chempion" nishoni berildi'},
+  ];
+  document.getElementById('notifList').innerHTML = items.map(i => `
+    <div class="notif-item"><div class="ic">${i.ic}</div><div><b>${i.title}</b><p>${i.desc}</p></div></div>
+  `).join('');
+  openModal('modalNotifications');
+}
+
+/* ---------- HELPERS ---------- */
+function numericOnly(el){ el.value = el.value.replace(/[^0-9]/g, ''); }
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+let toastTimer;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+api('/api/users/me/sync', { method:'POST' });
+</script>
+</body>
+</html>
